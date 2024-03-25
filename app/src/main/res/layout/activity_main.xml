@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:text="Original Text" />
+    <TextView
+        android:id="@+id/originalTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Original Text" />
+
+    <ImageButton
+        android:id="@+id/speechToTextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/mike_24"
+        android:text="Speech to Text" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:text="Updated Text" />
+    <TextView
+        android:id="@+id/updatedTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Updated Text" />
+
+</LinearLayout>
