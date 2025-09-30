@@ -1,36 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <TextView
+    <!--margin guideline for title-->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/topGuideline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintGuide_percent="0.20"
+        android:orientation="horizontal"/>
+    <!-- Title -->
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Your speech"
+        android:textColor="@color/black"
         android:textSize="25sp"
-        android:text="Original Text" />
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="@id/topGuideline"
+        app:layout_constraintStart_toStartOf="@id/topGuideline"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Original text below title -->
     <TextView
         android:id="@+id/originalTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Original Text" />
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        app:layout_constraintTop_toBottomOf="@id/titleText"
+        app:layout_constraintStart_toStartOf="@id/titleText"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <ImageButton
-        android:id="@+id/speechToTextButton"
+    <TextView
+        android:id="@+id/listeningText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="Listening..."
+        android:textColor="@color/black"
+        android:textSize="@dimen/_30ssp"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/_30sdp"
+        app:layout_constraintTop_toTopOf="@id/originalTextView"
+        app:layout_constraintStart_toStartOf="@id/topGuideline"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!--margin guideline for image button-->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/imageGuideline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.69"
+        app:layout_constraintTop_toBottomOf="@id/originalTextView" />
+    <!-- Speech button -->
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/micLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/mike_24"
-        android:text="Speech to Text" />
+        android:padding="@dimen/_9ssp"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@+id/imageGuideline"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/_20sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteX="@dimen/_125sdp">
+
+        <ImageButton
+            android:id="@+id/speechToTextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/rounded_background"
+            android:contentDescription="Speech to Text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:src="@drawable/mike_24" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:layout_width="match_parent"
+        android:id="@+id/updatedText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10ssp"
+        android:text="Tap to Speak"
+        android:textColor="@color/black"
         android:textSize="25sp"
-        android:text="Updated Text" />
-    <TextView
-        android:id="@+id/updatedTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Updated Text" />
+        app:layout_constraintTop_toBottomOf="@id/micLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/talking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/talking"
+        tools:layout_editor_absoluteX="@dimen/_20sdp"
+        app:layout_constraintTop_toBottomOf="@id/imageGuideline"
+        android:visibility="invisible"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

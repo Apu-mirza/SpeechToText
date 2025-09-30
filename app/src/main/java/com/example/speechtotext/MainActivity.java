@@ -1,18 +1,24 @@
 package com.example.speechtotext;
 
+import static android.content.ContentValues.TAG;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.RecognitionListener;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -23,24 +29,37 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_SPEECH_TO_TEXT = 1;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 2;
 
-    private TextView textView, updatedtextView;
+    private TextView listeningView, titleView, updatedtextView;
     private ImageButton button;
     private SpeechRecognizer speechRecognizer;
+    private ConstraintLayout micLayout;
+    long startTime, elapsedTime = 3000, stopTime;
+    private Handler backgroundHandler;
+    private Runnable backgroundRunnable;
+    private ImageView talkingView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = findViewById(R.id.originalTextView);
-        updatedtextView = findViewById(R.id.updatedTextView);
+        titleView = findViewById(R.id.titleText);
+        listeningView = findViewById(R.id.listeningText);
+        updatedtextView = findViewById(R.id.originalTextView);
         button = findViewById(R.id.speechToTextButton);
+        micLayout = findViewById(R.id.micLayout);
+        talkingView = findViewById(R.id.talking);
 
-        textView.setText("Hello i am mirza opu");
+        if (getSupportActionBar() != null){
+            getSupportActionBar().hide();
+        }
+
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                updatedtextView.setText("");
+                startTogglingBackground();
                 startSpeechToText();
             }
         });
@@ -83,20 +102,23 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onError(int error) {
+                    stopTogglingBackground();
                 }
 
                 @Override
                 public void onResults(Bundle results) {
                     ArrayList<String> speechResults = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                    stopTogglingBackground();
                     if (speechResults != null && !speechResults.isEmpty()) {
                         String spokenText = speechResults.get(0);
                         String referenceText = "Hello world";
 
-                        if (spokenText.equals(referenceText)) {
-                            updatedtextView.setText(spokenText);
-                        } else {
-                            highlightDifferences(spokenText, referenceText);
-                        }
+                        updatedtextView.setText(spokenText);
+//                        if (spokenText.equals(referenceText)) {
+//                            updatedtextView.setText(spokenText);
+//                        } else {
+//                            highlightDifferences(spokenText, referenceText);
+//                        }
                     }
                 }
 
@@ -124,34 +146,46 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void highlightDifferences(String spokenText, String referenceText) {
-        StringBuilder highlightedText = new StringBuilder();
-        String[] spokenWords = spokenText.split(" ");
-        String[] referenceWords = referenceText.split(" ");
+    private void startTogglingBackground(){
+        backgroundHandler = new Handler();
+        final long visibleTime = 800;       // Duration to keep the background visible
+        final long goneTime = 300;      // Duration to keep the background gone
+        listeningView.setVisibility(View.VISIBLE);
+        titleView.setVisibility(View.INVISIBLE);
+        talkingView.setVisibility(View.VISIBLE);
 
-        int minLength = Math.min(spokenWords.length, referenceWords.length);
 
-        // Compare each word in the spoken text with the corresponding word in the reference text
-        for (int i = 0; i < minLength; i++) {
-            if (spokenWords[i].equals(referenceWords[i])) {
-                highlightedText.append(spokenWords[i]).append(" ");
-            } else {
-                highlightedText.append("<font color='red'>").append(spokenWords[i]).append("</font> ");
+        backgroundRunnable = new Runnable() {
+            boolean isVisible = true;
+
+            @Override
+            public void run() {
+                if (isVisible) {
+                    micLayout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.layout_round));
+                    backgroundHandler.postDelayed(this, visibleTime);
+                } else {
+                    micLayout.setBackground(null);
+                    backgroundHandler.postDelayed(this, goneTime);
+                }
+                isVisible = !isVisible;
             }
+        };
+
+        // Start the animation immediately
+        backgroundHandler.post(backgroundRunnable);
+    }
+
+    private void stopTogglingBackground() {
+        listeningView.setVisibility(View.INVISIBLE);
+        titleView.setVisibility(View.VISIBLE);
+        talkingView.setVisibility(View.INVISIBLE);
+        if (backgroundHandler != null && backgroundRunnable != null) {
+            // Remove any pending runnables to stop the animation loop
+            backgroundHandler.removeCallbacks(backgroundRunnable);
         }
-
-        // Add any remaining words from the longer text
-        if (spokenWords.length > referenceWords.length) {
-            for (int i = minLength; i < spokenWords.length; i++) {
-                highlightedText.append("<font color='red'>").append(spokenWords[i]).append("</font> ");
-            }
-        } else if (spokenWords.length < referenceWords.length) {
-            for (int i = minLength; i < referenceWords.length; i++) {
-                highlightedText.append(referenceWords[i]).append(" ");
-            }
+        // Ensure the background is cleared when recognition stops
+        if (micLayout != null) {
+            micLayout.setBackground(null);
         }
-
-        // Set the text of the TextView with HTML formatting to display the highlighted differences
-        updatedtextView.setText(android.text.Html.fromHtml(highlightedText.toString()));
     }
 }
