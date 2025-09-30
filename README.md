@@ -25,4 +25,4 @@ This Android application captures voice input through the device microphone and 
 - If it doesn't open automatically, go to File → Open and select the cloned directory
 ## Functions/Snapshots
 #### How app works
-![app result/]([https://github.com/Apu-mirza/BIn2Dec/blob/main/assets/screenshot.png](https://github.com/Apu-mirza/SpeechToText/blob/master/asset/app_activity.gif))
+![app result/](https://github.com/Apu-mirza/SpeechToText/blob/master/asset/app_activity.gif)
